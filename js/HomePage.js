@@ -1,66 +1,68 @@
 import React, {Component} from 'react';
 import { StyleSheet, View, Text, BackHandler, ToastAndroid,Image} from 'react-native';
 import {TabNavigator} from "react-navigation";
+import Hot from "./Hot";
+import Mine from "./Mine";
+import Trending from "./Trending";
+import Favorite from "./Favorite";
 export default class HomePage extends Component{
     constructor(props){
         super(props);
         this.state={
-            selectedTab:'popular', //默认选中的选项卡
+            selectedTab:'Hot', //默认选中的选项卡
         };
-    }
-    constructor(){
-        super();
     }
     render(){
         return (<View style={styles.container}>
              <TabNavigator>
                  <TabNavigator.Item
-                     selected={this.state.selectedTab==='popular'}
+                     selected={this.state.selectedTab==='Hot'}
                      title="最热"
                      selectedTitleStyle={{color:'#63B8FF'}}
                      renderIcon={()=><Image style={styles.icon} source={require('../mres/img/home_live_selected.png')} />}
                      renderSelectedIcon={() =>
                          <Image style={[styles.icon,{tintColor:'#63B8FF'}]} source={require('../mres/img/home_live_normal.png')}/>}
-                     onPress={()=>this.setState({selectedTab:'popular'})}
+                     onPress={()=>this.setState({selectedTab:'Hot'})}
                  >
                      选项卡对应的页面
-                     <PopularPage/>
+                     <Hot/>
                  </TabNavigator.Item>
 
                  <TabNavigator.Item
-                     selected={this.state.selectedTab==='trending'}
+                     selected={this.state.selectedTab==='Trending'}
                      title="趋势"
                      selectedTitleStyle={{color:'#63B8FF'}}
                      renderIcon={()=><Image style={styles.icon} source={require('../mres/img/home_message_selected.png')} />}
                      renderSelectedIcon={() =>
                          <Image style={[styles.icon,{tintColor:'#63B8FF'}]} source={require('../mres/img/home_message_normal.png')}/>}
-                     onPress={()=>this.setState({selectedTab:'trending'})}
+                     onPress={()=>this.setState({selectedTab:'Trending'})}
                  >
                      <View style={{backgroundColor:'#0F0',flex:1}}></View>
+                     <Trending/>
                  </TabNavigator.Item>
 
                  <TabNavigator.Item
-                     selected={this.state.selectedTab==='favorite'}
+                     selected={this.state.selectedTab==='Favorite'}
                      title="收藏"
                      selectedTitleStyle={{color:'#63B8FF'}}
                      renderIcon={()=><Image style={styles.icon} source={require('../mres/img/home_user_selected.png')} />}
                      renderSelectedIcon={() =>
                          <Image style={[styles.icon,{tintColor:'#63B8FF'}]} source={require('../mres/img/home_user_selected.png')}/>}
-                     onPress={()=>this.setState({selectedTab:'favorite'})}
+                     onPress={()=>this.setState({selectedTab:'Favorite'})}
                  >
-                     <CustomViewPage {...this.props} />
+                     <Favorite {...this.props} />
                  </TabNavigator.Item>
 
                  <TabNavigator.Item
-                     selected={this.state.selectedTab==='my'}
+                     selected={this.state.selectedTab==='Mine'}
                      title="我的"
                      selectedTitleStyle={{color:'#63B8FF'}}
                      renderIcon={()=><Image style={styles.icon} source={require('../mres/img/home_user_selected.png')} />}
                      renderSelectedIcon={() =>
                          <Image style={[styles.icon,{tintColor:'#63B8FF'}]} source={require('../mres/img/home_user_normal.png')}/>}
-                     onPress={()=>this.setState({selectedTab:'my'})}
+                     onPress={()=>this.setState({selectedTab:'Mine'})}
                  >
-                     <MyPage {...this.props} />
+                     <Mine {...this.props} />
                  </TabNavigator.Item>
              </TabNavigator>
         </View>);
@@ -90,4 +92,10 @@ const styles=StyleSheet.create({
         width:26,
         height:26
     }
+});
+const Tabs = TabNavigator({
+    Hot :{screen: Hot},
+    Mine :{screen: Mine},
+    Trending :{screen: Trending},
+    Favorite :{screen: Favorite},
 });
