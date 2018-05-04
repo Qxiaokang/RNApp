@@ -7,8 +7,8 @@ import HomePage from "./HomePage";
 import {StackNavigator} from "react-navigation";
 
 let image1 = require('../mres/img/splash1.jpg');
-let image2 = require('../mres/img/banner3.jpg');
-let image3 = require('../mres/img/splash2.jpg');
+let image2 = require('../mres/img/timg.jpg');
+let image3 = require('../mres/img/splash3.jpg');
 
 const {width, height} = Dimensions.get('window');
 export default class GuideView extends Component{
@@ -22,6 +22,7 @@ export default class GuideView extends Component{
             contentContainerStyle={styles.contentContainer}
             bounces={false}
             pagingEnabled={true}
+
             horizontal={true}>
             <Image source={image1} style={styles.backgroundImage}/>
             <Image source={image2} style={styles.backgroundImage}/>
@@ -68,12 +69,11 @@ var styles = StyleSheet.create({
     btn: {
         width: 150,
         height: 50,
-        backgroundColor: '#90ee90',
+        backgroundColor: '#148525',
         borderRadius: 8,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 550,
-
+        marginTop:height-150,
     },
     btnText: {
         fontSize: 18,
