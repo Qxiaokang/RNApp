@@ -1,70 +1,12 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, BackHandler, ToastAndroid, Image, Button,WebView} from 'react-native';
-import Hot from "./Hot";
-import Mine from "./Mine";
+import {StyleSheet, Image} from 'react-native';
+// 注册tabs
 import Trending from "./Trending";
+import {TabNavigator} from "react-navigation";
 import Favorite from "./Favorite";
-import {TabNavigator,StackNavigator} from 'react-navigation';
-import ChildPages from '../js/ChildPages';
-export default class HomePage extends Component {
-    constructor(props) {
-        super(props);
-        /*this.state = {
-            selectedTab: 'Mine', //默认选中的选项卡
-        };*/
-    }
+import Mine from "./Mine";
+import Hot from "./Hot";
 
-    render() {
-        const {navigate}=this.props.navigation;
-        return (<View style={styles.container}>
-            <Tabs/>
-        </View>);
-    }
-
-    componentDidMount() {
-        BackHandler.addEventListener('hardwareBackPress', this.onBackAndroid);
-    }
-
-    componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress', this.onBackAndroid);
-    }
-
-    onBackAndroid = () => {
-        if (this.lastBackPressed && this.lastBackPressed + 2000 >= Date.now()) {
-            //最近2秒内按过back键，可以退出应用。
-            BackHandler.exitApp();
-            return false;
-        }
-        this.lastBackPressed = Date.now();
-        ToastAndroid.show('再按一次退出应用', ToastAndroid.SHORT);
-        return true;
-    };
-
-    _renderTabarItems(selectedTab, icon, selectedIcon, Component) {
-        return (<Tabs.Item selected={this.state.selectedTab === selectedTab} title={selectedTab}
-                                   titleStyle={styles.tabText} selectedTitleStyle={styles.selectedTabText}
-                                   renderIcon={() => <Image style={styles.icon} source={icon}/>}
-                                   renderSelectedIcon={() => <Image style={styles.icon} source={selectedIcon}/>}
-                                   onPress={() => this.setState({selectedTab: selectedTab})}> <Component/>
-        </Tabs.Item>);
-    }
-}
-const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    },
-    tabText: {
-        color: '#000000',
-        fontSize: 10
-    },
-    selectedTabText: {
-        color: '#D81E06'
-    },
-    icon: {
-        width: 26,
-        height: 26
-    }
-});
 const Tabs = TabNavigator({
     最热: {
         screen: Hot, navigationOptions: {
@@ -120,3 +62,20 @@ const Tabs = TabNavigator({
         }
     },
 });
+const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
+    tabText: {
+        color: '#000000',
+        fontSize: 10
+    },
+    selectedTabText: {
+        color: '#D81E06'
+    },
+    icon: {
+        width: 26,
+        height: 26
+    }
+});
+export default Tabs;

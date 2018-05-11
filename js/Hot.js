@@ -20,13 +20,11 @@ var styles =StyleSheet.create({
         flex: 1,
     },
     text:{
-        width:100,
-        height:50,
         color:'#9B76B1',
         alignItems:'center',
         justifyContent:'center',
         textAlign:'center',
-        fontsize:50
+        fontSize:50
     },
     backgroundImage:{
         flex:1,

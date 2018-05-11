@@ -30,7 +30,7 @@ export default class GuideView extends Component{
                 <TouchableOpacity
                     style={styles.btn}
                     onPress={() => {
-                        this.props.navigation.navigate('HomePage');
+                        this.props.navigation.navigate('Tabs');
                     }}
                 ><Text style={styles.btnText}>启动应用</Text>
                 </TouchableOpacity>
