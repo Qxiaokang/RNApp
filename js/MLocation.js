@@ -5,14 +5,22 @@ import {
     Text, ToastAndroid,
     View
 } from 'react-native';
+import NetUtil from "./utils/NetUtil";
 
 var Geolocation = require('Geolocation');
 
 //监听定位的id
 var watchID = null
+//post请求
+let params = {'key1':'value1','key2':'value2'};
+NetUtil.postJSON('http://www.baidu.com/',params,function (set) {
+    //下面的就是请求来的数据
+    console.log(set)
+})
 
 //默认应用的容器组件
 export default class MLocation extends Component {
+
     //渲染
     render() {
         return (
@@ -41,6 +49,11 @@ export default class MLocation extends Component {
                 alert("获取位置失败："+ error)
             }
         );
+        //get请求,以百度为例,没有参数,没有header
+        NetUtil.get('https://www.baidu.com/','',function (set) {
+            //下面是请求下来的数据
+            console.log(set)
+        })
     }
 
     //停止监听位置变化

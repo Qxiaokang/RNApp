@@ -1,9 +1,7 @@
 import GuideView from '../js/GuideView';
-import HomePage from '../js/HomePage';
 import { StackNavigator } from 'react-navigation';
 import SplashView from './SplashView';
 import MLocation from '../js/MLocation';
-import Util from '../js/Util';
 import Tabs from "./Tabs";
 const AppNavigation = StackNavigator(
     {

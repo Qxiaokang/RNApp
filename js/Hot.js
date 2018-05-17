@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {Text,StyleSheet,View,ImageBackground} from 'react-native';
-import Util from "./Util";
 export default class Hot extends Component{
     constructor(){
         super();

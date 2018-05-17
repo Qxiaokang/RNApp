@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {View, Image, StyleSheet,Text} from 'react-native';
 import Util from '../utils/Util';
-let img1= require('../mres/img/item/punch_card_icon.png');
-let img=require('../mres/img/item/right_arrow.png');
+let img1= require('../../../../mres/Home/icon/punch_card_icon.png');
+let img=require('../../../../mres/Home/icon/right_arrow.png');
 export default class ItemView extends Component {
     static defaultProps = {
         icon:NaN,

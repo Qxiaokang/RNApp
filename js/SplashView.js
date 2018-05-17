@@ -3,6 +3,7 @@ import { View, Text, StyleSheet,Animated,Dimensions } from 'react-native';
 import GetSetStorge from '../js/GetSetStorge';
 const splashImg = require('../mres/img/banner4.jpg');//加载图片
 const { width, height } = Dimensions.get('window');
+import SQLite from '../js/db/SQLite';
 // create a component
 class SplashView extends Component {
     constructor(props) {

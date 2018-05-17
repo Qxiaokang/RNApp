@@ -1,3 +1,3 @@
 import { AppRegistry } from 'react-native';
-import AppNavigation from './js/Main';
-AppRegistry.registerComponent('RNApp', () => AppNavigation);
+import App from './js/huihe/view/pages/Home';
+AppRegistry.registerComponent('RNApp', () => App);

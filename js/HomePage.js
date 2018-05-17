@@ -5,7 +5,6 @@ import Mine from "./Mine";
 import Trending from "./Trending";
 import Favorite from "./Favorite";
 import {TabNavigator,StackNavigator} from 'react-navigation';
-import ChildPages from '../js/ChildPages';
 export default class HomePage extends Component {
     constructor(props) {
         super(props);
