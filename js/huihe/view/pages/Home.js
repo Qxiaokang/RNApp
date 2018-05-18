@@ -126,7 +126,7 @@ const AppNavigator = StackNavigator(
     {
         Login:{screen:Login},
         Main: {screen: HomeNavigator},
-        Location:{screen: Location}
+        Location:{screen: Location},
     },
     {
         headerMode: 'screen',  //Only works when headerMode is screen

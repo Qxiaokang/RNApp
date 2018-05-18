@@ -21,7 +21,6 @@ export default class Location extends Component{
                         <Text style={styles.textChoose}>选择位置</Text>
                         <Text>)</Text>
                     </View>
-                    <Line/>
                     <View style={styles.myLocation}>
                         <Text style={styles.textRemark}> 备注</Text><TextInput style={styles.input} onChangeText={(text=>this.setState({text}))}
                                                                              value={this.state.text}></TextInput>
@@ -39,7 +38,7 @@ const styles=StyleSheet.create(
         content:{
             width:Util.size.width,
             height:Util.size.height,
-            backgroundColor:'#F00',
+            backgroundColor:'#FFF',
             flex:1,
             alignItems:'center'
         },

@@ -9,6 +9,7 @@ var database_name = "test.db";//数据库文件
 var database_version = "1.0";//版本号
 var database_displayname = "MySQLite";
 var database_size = -1;//-1应该是表示无限制
+var T_USER='t_user';
 var db;
 export default class  SQLite extends Component{
     componentWillUnmount(){
@@ -39,7 +40,7 @@ export default class  SQLite extends Component{
         }
         //创建用户表  
         db.transaction((tx)=> {
-            tx.executeSql('CREATE TABLE IF NOT EXISTS USER(' +
+            tx.executeSql('CREATE TABLE IF NOT EXISTS '+T_USER+'(' +
                 'id INTEGER PRIMARY KEY  AUTOINCREMENT,' +
                 'user_id VARCHAR,' +
                 'user_pwd VARCHAR,' +
@@ -65,14 +66,14 @@ export default class  SQLite extends Component{
             this.open();
         }
         db.transaction((tx)=>{
-            tx.executeSql('delete from user',[],()=>{
+            tx.executeSql('delete from t_user',[],()=>{
 
             });
         });
     }
     dropTable(){
         db.transaction((tx)=>{
-            tx.executeSql('drop table user',[],()=>{
+            tx.executeSql('drop table t_user',[],()=>{
 
             });
         },(err)=>{
@@ -91,15 +92,17 @@ export default class  SQLite extends Component{
         db.transaction((tx)=>{
             for(let i=0; i<len; i++){
                 var user = userData[i];
+                let user_id=user.id;
+                let user_pwd=user.pwd;
                 let name= user.name;
                 let age = user.age;
                 let sex = user.sex;
                 let phone = user.phone;
                 let email = user.email;
                 let qq = user.qq;
-                let sql = "INSERT INTO user(user_id,user_pwd,name,age,sex,phone,email,qq)"+
+                let sql = "INSERT INTO "+T_USER+"(user_id,user_pwd,name,age,sex,phone,email,qq)"+
                     "values(?,?,?,?,?,?,?,?)";
-                tx.executeSql(sql,[name,age,sex,phone,email,qq],()=>{
+                tx.executeSql(sql,[user_id,user_pwd,name,age,sex,phone,email,qq],()=>{
 
                     },(err)=>{
                         console.log(err);

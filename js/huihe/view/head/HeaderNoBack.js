@@ -15,8 +15,8 @@ export default class HeaderNoBack extends Component {
     render() {  
         return (  
                 <View style={styles.container}>  
-                    <View style={styles.textview}>  
-                        <Text style={styles.textstyle}>{this.props.text || "标题头"}</Text>  
+                    <View style={styles.textView}>
+                        <Text style={styles.textStyle}>{this.props.text || "标题头"}</Text>
                     </View>  
                 </View>  
         );  
@@ -32,11 +32,11 @@ const styles = StyleSheet.create({
         alignSelf: 'stretch',  
         backgroundColor: '#c92a3a',  
     },  
-    textview: {  
+    textView: {
         flex: 1,  
         alignSelf: 'center',  
     },  
-    textstyle: {  
+    textStyle: {
         fontSize: 18,  
         color: '#fff',  
         textAlign: 'center',

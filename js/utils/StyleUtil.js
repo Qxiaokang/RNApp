@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
 const Styles = StyleSheet.create({
     btnLogin:{
-        marginTop:10,
+        marginTop:15,
         width:'80%',
         height:40,
         backgroundColor:'#C92A3A',
