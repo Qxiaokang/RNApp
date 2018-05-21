@@ -34,13 +34,12 @@ const styles = StyleSheet.create({
     },  
     textView: {
         flex: 1,  
-        alignSelf: 'center',  
+        alignSelf: 'center',
+        alignItems:'center'
     },  
     textStyle: {
         fontSize: 18,  
         color: '#fff',  
         textAlign: 'center',
-        marginTop: 20,  
-        marginBottom: 10
     },  
 }); 

@@ -11,10 +11,10 @@
     "react-native": "^0.55.3",
     "react-native-amap": "^0.1.0",
     "react-native-deprecated-custom-components": "^0.1.2",
-    "react-native-root-toast": "^3.0.1",
     "react-native-splash-screen": "^3.0.6",
     "react-native-sqlite-storage": "^3.3.4",
     "react-native-tab-navigator": "^0.3.4",
+    "react-native-whc-toast": "^1.0.0",
     "react-navigation": "^1.5.12"
   },
   "devDependencies": {

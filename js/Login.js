@@ -1,15 +1,18 @@
 import React from 'react';
-import {View, Text, Image, TextInput, TouchableOpacity, StyleSheet, BackHandler, ToastAndroid} from 'react-native';
+import {View, Text, Image, TextInput, TouchableOpacity, StyleSheet, BackHandler,Alert} from 'react-native';
 import Util from "./utils/Util";
 import StyleUtil from './utils/StyleUtil';
 import Header from './huihe/view/head/Header';
 import SQLite from "./db/SQLite";
 import GetSetStorge from "./GetSetStorge";
 import NetWorkTool from "./utils/NetWorkTool";
-
+import Toast from  'react-native-whc-toast'; // 引入类库
+import { NavigationActions } from 'react-navigation'
 var sqlite = new SQLite();
 var db;
 var net=false;
+
+// 也可以通过调用Toast.hide(toast); 手动隐藏toast实例
 export default class Login extends React.Component {
     constructor(props) {
         super(props);
@@ -17,12 +20,13 @@ export default class Login extends React.Component {
         this.userPwd = '';
         NetWorkTool.checkNetworkState((isConnected) => {
             if (!isConnected) {
-                ToastAndroid.show(NetWorkTool.NOT_NETWORK, ToastAndroid.SHORT);
+                Toast.show(NetWorkTool.NOT_NETWORK, Toast.Duration.SHORT);
                 net=false;
             }else {
                 net=true;
             }
         });
+        this._back=this._back.bind(this);
     }
 
     handleMethod(isConnected) {
@@ -89,7 +93,7 @@ export default class Login extends React.Component {
     render() {
         return (
             <View>
-                <Header {...this.props} title="登录"/>
+                <Header {...this.props} title="登录" showBack={true} backFunc={this._back}/>
                 <View style={styles.content}>
                     <Image source={require('../mres/img/icon1.png')}/>
                     <TextInput style={styles.input1} placeholder='请输入手机号码'
@@ -103,27 +107,36 @@ export default class Login extends React.Component {
                                    underlineColorAndroid='transparent'
                                    onChangeText={(text) => this.userPwd = text}
                         />
-                        <Text style={styles.forgetPwd}>忘记密码</Text>
+                        <TouchableOpacity onPress={()=>Alert.alert('提示',"此功能尚未开通")} style={styles.forgetPwd}>
+                            <Text style={styles.forgetText}>忘记密码</Text></TouchableOpacity>
                     </View>
                     <TouchableOpacity style={StyleUtil.btnLogin}
                                       onPress={() => {
                                           if (this.userName == '') {
-                                              ToastAndroid.show('手机号码不能为空', ToastAndroid.SHORT);
+                                              this.refs.toast.showBottom('手机号码不能为空');
+                                              //Toast.show('手机号码不能为空',  Toast.Duration.SHORT);
                                           } else if (this.userPwd == '') {
-                                              ToastAndroid.show('密码不能为空', ToastAndroid.SHORT);
+                                              this.refs.toast.showBottom('密码不能为空');
                                           } else {
                                               db.transaction((tx) => {
                                                   tx.executeSql("select * from t_user where user_id=? and user_pwd=?", [this.userName, this.userPwd], (tx, results) => {
                                                       var len = results.rows.length;
                                                       if (len > 0) {
-                                                          ToastAndroid.show('登录成功', ToastAndroid.SHORT);
+                                                          this.refs.toast.show('登录成功', Toast.Duration.short,Toast.Position.long);
+                                                          /*var resetAction = NavigationActions.reset({
+                                                              index: 0,
+                                                              actions: [
+                                                                  NavigationActions.navigate({routeName:'Main'})//要跳转到的页面名字
+                                                              ]
+                                                          });
+                                                          this.props.navigation.dispatch(resetAction);*/
                                                           this.props.navigation.navigate('Main');
                                                       } else {
-                                                          ToastAndroid.show('用户名或密码错误，请重新登录', ToastAndroid.SHORT);
+                                                          this.refs.toast.show('用户名或密码错误，请重新登录', Toast.Duration.short,Toast.Position.bottom);
                                                       }
                                                   });
                                               }, (error) => {//打印异常信息
-                                                  ToastAndroid.show('登录出错', ToastAndroid.SHORT);
+                                                  this.refs.toast.show('登录出错', Toast.Duration.short,Toast.Position.bottom);
                                                   console.log(error);
                                               });
 
@@ -132,6 +145,7 @@ export default class Login extends React.Component {
                     >
                         <Text style={StyleUtil.btnText}>登 录</Text>
                     </TouchableOpacity>
+                    <Toast ref={'toast'}/>
                 </View>
             </View>
         )
@@ -139,9 +153,8 @@ export default class Login extends React.Component {
 
     }
 
-    backFunc() {
+    _back=()=>{
         BackHandler.exitApp();
-        return true;
     };
 
 }
@@ -155,8 +168,9 @@ const styles = StyleSheet.create(
             alignItems: 'center'
         },
         pwdView: {
-            position: 'relative',
-            width: '80%'
+            width: '80%',
+            marginTop:15,
+            position:'relative'
         },
         logo: {
             width: Util.size.width / 3,
@@ -166,16 +180,13 @@ const styles = StyleSheet.create(
             position: 'absolute',
             right: 10,
             height: 40,
-            lineHeight: 45,
             top: '50%',
             marginTop: -20,
-            color: '#c92a3a'
         },
-        view: {
-            width: Util.size.width,
-            height: Util.size.height / 2,
-            alignItems: 'center',
-            justifyContent: 'center'
+        forgetText:{
+            color: '#c92a3a',
+            height:40,
+            lineHeight:35
         },
         input1: {
             marginTop: 15,
@@ -186,8 +197,8 @@ const styles = StyleSheet.create(
             height: 40
         },
         input2: {
-            marginTop: 15,
             borderColor: '#AAAAAA',
+            width:'100%',
             borderWidth: 2,
             borderRadius: 15,
             width: '100%',

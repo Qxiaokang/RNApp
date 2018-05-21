@@ -7,15 +7,14 @@ import {
     StyleSheet
 } from 'react-native';;
 export default class Header extends Component{
-    getDefaultProps(){
-        return {
-            title:"标题",
-            showBack:true,//是否显示左侧的返回
-            sideWidth:null,
-        }
+    static defaultProps={
+        title:"标题",
+        showBack:true,//是否显示左侧的返回
+        sideWidth:null,
     }
     backBtnFunc(){
-        this.props.backFunc ? this.props.backFunc.call(null) : this.props.navigator.pop();
+        this.props.backFunc.call(null);
+        //this.props.backFunc ? this.props.backFunc.call('_back') : this.props.navigator.pop();
     }
 
     render(){
