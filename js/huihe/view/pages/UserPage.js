@@ -11,6 +11,7 @@ let imgSet= require('../../../../mres/Home/icon/setting.png');
 import Util from '../utils/Util';
 import Location from '../pages/Location';
 import {StackNavigator} from 'react-navigation';
+import Header from "../head/Header";
 export default class UserPage extends Component {
 
 	static navigationOptions = {
@@ -21,7 +22,7 @@ export default class UserPage extends Component {
 		const {navigate}=this.props.navigation;
 		return(
 			<View>
-			<HeaderNoBack text='我的' />
+			<Header text='我的' showBack={true} backFunc={false} />
 			<ScrollView style={styles.content}>
 				
 				<View style={styles.centerView}/>

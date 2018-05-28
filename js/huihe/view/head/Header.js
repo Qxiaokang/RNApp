@@ -4,17 +4,36 @@ import {
     Text,
     Image,
     TouchableOpacity,
-    StyleSheet
-} from 'react-native';;
+    StyleSheet,
+    BackHandler,
+    Alert
+} from 'react-native';
+
+/**
+ * 自定义带返回按钮的Title
+ */
 export default class Header extends Component{
+    constructor(props){
+        super(props);
+    }
     static defaultProps={
         title:"标题",
         showBack:true,//是否显示左侧的返回
         sideWidth:null,
+        backFunc:true,
+        name: null,
+        _this:null
     }
-    backBtnFunc(){
-        this.props.backFunc.call(null);
-        //this.props.backFunc ? this.props.backFunc.call('_back') : this.props.navigator.pop();
+    backBtnFunc=()=>{
+            //this.props.backFunc ? this.props.backFunc.call() : this.props.navigator.pop();
+        var mThis=this.props._this;
+        if(this.props.name==null){
+            this.props.backFunc?mThis.props.navigation.goBack():this.close();
+        }else{
+            console.log("name-----------"+this.props.name)
+            mThis.props.navigation.navigate(this.props.name);
+        }
+
     }
 
     render(){
@@ -36,14 +55,36 @@ export default class Header extends Component{
             </View>
         )
     }
+    /**提示是否退出APP*/
+    close=()=>{
+        //退出app
+        Alert.alert('提示','确定退出程序？',
+            [
+                {
+                    text: '确 定',
+                    onPress: () => BackHandler.exitApp()
+                },
+                {
+                    text: '取 消',
+                    style: 'cancel'
+                }
+            ],
+            {
+                cancelable: true,
+                onDismiss: () => {
+                }
+            });
+    };
+
 }
 
 const styles = StyleSheet.create({
     header:{
         backgroundColor:"#c92a3a",
+        width:'100%',
         height :50,
         flexDirection:"row",
-        alignItems:"center"
+        alignItems:"center",
     },
     width50:{
         width:50

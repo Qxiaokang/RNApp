@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, Image, TextInput, TouchableOpacity, StyleSheet, BackHandler,Alert} from 'react-native';
+import {View, Text, Image, TextInput, TouchableOpacity, StyleSheet,Alert} from 'react-native';
 import Util from "./utils/Util";
 import StyleUtil from './utils/StyleUtil';
 import Header from './huihe/view/head/Header';
@@ -7,11 +7,9 @@ import SQLite from "./db/SQLite";
 import GetSetStorge from "./GetSetStorge";
 import NetWorkTool from "./utils/NetWorkTool";
 import Toast from  'react-native-whc-toast'; // 引入类库
-import { NavigationActions } from 'react-navigation'
 var sqlite = new SQLite();
 var db;
 var net=false;
-
 // 也可以通过调用Toast.hide(toast); 手动隐藏toast实例
 export default class Login extends React.Component {
     constructor(props) {
@@ -26,7 +24,6 @@ export default class Login extends React.Component {
                 net=true;
             }
         });
-        this._back=this._back.bind(this);
     }
 
     handleMethod(isConnected) {
@@ -93,7 +90,7 @@ export default class Login extends React.Component {
     render() {
         return (
             <View>
-                <Header {...this.props} title="登录" showBack={true} backFunc={this._back}/>
+                <Header {...this.props} title="登录" showBack={false}/>
                 <View style={styles.content}>
                     <Image source={require('../mres/img/icon1.png')}/>
                     <TextInput style={styles.input1} placeholder='请输入手机号码'
@@ -113,6 +110,7 @@ export default class Login extends React.Component {
                     <TouchableOpacity style={StyleUtil.btnLogin}
                                       onPress={() => {
                                           if (this.userName == '') {
+                                              //15136311938
                                               this.refs.toast.showBottom('手机号码不能为空');
                                               //Toast.show('手机号码不能为空',  Toast.Duration.SHORT);
                                           } else if (this.userPwd == '') {
@@ -152,11 +150,6 @@ export default class Login extends React.Component {
             ;
 
     }
-
-    _back=()=>{
-        BackHandler.exitApp();
-    };
-
 }
 const styles = StyleSheet.create(
     {

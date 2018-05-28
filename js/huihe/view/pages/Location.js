@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {View,Text,StyleSheet,ScrollView,Image,TextInput,TouchableOpacity} from 'react-native';
-import HeaderNoBack from '../head/HeaderNoBack';
 import Util from "../utils/Util";
+import Header from "../head/Header";
 
 export default class Location extends Component{
     constructor(props){
@@ -11,8 +11,7 @@ export default class Location extends Component{
     render(){
         return(
             <View style={styles.content}>
-                <HeaderNoBack text='考勤打卡' />
-
+                <Header title='考勤打卡' showBack={true} backFunc={true} _this={this}/>
                 <View style={styles.bottomView}>
                     <View style={styles.myLocation}>
                         <Text> 我的位置</Text>

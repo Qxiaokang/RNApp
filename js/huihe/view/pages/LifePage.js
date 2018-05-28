@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {View,Text,StyleSheet} from 'react-native';
-import HeaderNoBack from '../head/HeaderNoBack';
+import Header from "../head/Header";
 
 export default class LifePage extends Component {
 
@@ -13,7 +13,7 @@ export default class LifePage extends Component {
 	render(){
 		return(
 			<View>
-				<HeaderNoBack text='生活' />
+				<Header title='生活' showBack={true} backFunc={false}/>
 				<Text>生活</Text>
 			</View>
 		);
