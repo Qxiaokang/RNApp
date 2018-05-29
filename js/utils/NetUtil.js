@@ -45,10 +45,11 @@ export default class NetUtil{
         })
             .then((response) => response.json())
             .then((responseJSON) => {
+                console.log("responseJson:"+responseJSON)
                 callback(responseJSON)
             })
             .catch((error) => {
-                console.log("error = " + error)
+                console.log("postJsonError = " + error)
             });
     }
     /*
@@ -62,6 +63,8 @@ export default class NetUtil{
         fetch(url,{
             method: 'POST',
             headers: {
+                //'Accept': 'application/json',
+                //'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: params

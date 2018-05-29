@@ -63,7 +63,7 @@ const HomeNavigator = TabNavigator(
     },
     {
         tabBarPosition: 'bottom',
-        swipeEnabled: false,
+        swipeEnabled: true,//是否允许左右滑动
         animationEnabled: false,
         lazyLoad: true,
         showIcon:true,

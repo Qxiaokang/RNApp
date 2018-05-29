@@ -1,27 +1,34 @@
 import React from 'react';
-import {View, Text, Image, TextInput, TouchableOpacity, StyleSheet,Alert} from 'react-native';
+import {
+    View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView,
+    BackHandler
+} from 'react-native';
 import Util from "./utils/Util";
 import StyleUtil from './utils/StyleUtil';
 import Header from './huihe/view/head/Header';
 import SQLite from "./db/SQLite";
 import GetSetStorge from "./GetSetStorge";
 import NetWorkTool from "./utils/NetWorkTool";
-import Toast from  'react-native-whc-toast'; // 引入类库
+import Toast from 'react-native-whc-toast'; // 引入类库
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import Loading from 'react-native-loading-w'
+import NetUtil from "./utils/NetUtil";
 var sqlite = new SQLite();
 var db;
-var net=false;
+var net = false;
 // 也可以通过调用Toast.hide(toast); 手动隐藏toast实例
 export default class Login extends React.Component {
     constructor(props) {
         super(props);
         this.userName = '';
         this.userPwd = '';
+        this.text = '加载中...';
         NetWorkTool.checkNetworkState((isConnected) => {
             if (!isConnected) {
-                Toast.show(NetWorkTool.NOT_NETWORK, Toast.Duration.SHORT);
-                net=false;
-            }else {
-                net=true;
+                this.refs.toast.show(NetWorkTool.NOT_NETWORK, Toast.Duration.short, Toast.Position.bottom);
+                net = false;
+            } else {
+                net = true;
             }
         });
     }
@@ -88,67 +95,102 @@ export default class Login extends React.Component {
     }
 
     render() {
+        var _this=this;
         return (
             <View>
                 <Header {...this.props} title="登录" showBack={false}/>
-                <View style={styles.content}>
-                    <Image source={require('../mres/img/icon1.png')}/>
-                    <TextInput style={styles.input1} placeholder='请输入手机号码'
-                               underlineColorAndroid='transparent' //设置下划线背景色透明 达到去掉下划线的效果
-                               onChangeText={(text) => this.userName = text}
-                    />
-                    <View style={styles.pwdView}>
-                        <TextInput style={styles.input2} placeholder='请输入密码'
-                                   password={true}
-                                   secureTextEntry={true}
-                                   underlineColorAndroid='transparent'
-                                   onChangeText={(text) => this.userPwd = text}
+                <KeyboardAwareScrollView>
+                    <View style={styles.content}>
+                        <Image source={require('../mres/img/icon1.png')}/>
+                        <TextInput style={styles.input1} placeholder='请输入手机号码'
+                                   underlineColorAndroid='transparent' //设置下划线背景色透明 达到去掉下划线的效果
+                                   onChangeText={(text) => this.userName = text}
                         />
-                        <TouchableOpacity onPress={()=>Alert.alert('提示',"此功能尚未开通")} style={styles.forgetPwd}>
-                            <Text style={styles.forgetText}>忘记密码</Text></TouchableOpacity>
-                    </View>
-                    <TouchableOpacity style={StyleUtil.btnLogin}
-                                      onPress={() => {
-                                          if (this.userName == '') {
-                                              //15136311938
-                                              this.refs.toast.showBottom('手机号码不能为空');
-                                              //Toast.show('手机号码不能为空',  Toast.Duration.SHORT);
-                                          } else if (this.userPwd == '') {
-                                              this.refs.toast.showBottom('密码不能为空');
-                                          } else {
-                                              db.transaction((tx) => {
-                                                  tx.executeSql("select * from t_user where user_id=? and user_pwd=?", [this.userName, this.userPwd], (tx, results) => {
-                                                      var len = results.rows.length;
-                                                      if (len > 0) {
-                                                          this.refs.toast.show('登录成功', Toast.Duration.short,Toast.Position.long);
-                                                          /*var resetAction = NavigationActions.reset({
-                                                              index: 0,
-                                                              actions: [
-                                                                  NavigationActions.navigate({routeName:'Main'})//要跳转到的页面名字
-                                                              ]
+                        <View style={styles.pwdView}>
+                            <TextInput style={styles.input2} placeholder='请输入密码'
+                                       password={true}
+                                       secureTextEntry={true}
+                                       underlineColorAndroid='transparent'
+                                       onChangeText={(text) => this.userPwd = text}
+                            />
+                            <TouchableOpacity onPress={() => Alert.alert('提示', "此功能尚未开通")} style={styles.forgetPwd}>
+                                <Text style={styles.forgetText}>忘记密码</Text></TouchableOpacity>
+                        </View>
+                        <TouchableOpacity style={StyleUtil.btnLogin}
+                                          onPress={() => {
+                                              if (this.userName == '') {
+                                                  //15136311938
+                                                  this.refs.toast.showBottom('手机号码不能为空');
+                                                  //Toast.show('手机号码不能为空',  Toast.Duration.SHORT);
+                                              } else if (this.userPwd == '') {
+                                                  this.refs.toast.showBottom('密码不能为空');
+                                              } else {
+                                                  if (net) {
+                                                      _this.getLoading().show('登录中...');
+                                                      let params = {
+                                                          'username': this.userName,
+                                                          'password': this.userPwd
+                                                      };
+                                                      let formData = new FormData();
+                                                      formData.append("username",this.userName);
+                                                      formData.append("password",this.userPwd);
+                                                      console.log(JSON.stringify(params));
+                                                      NetUtil.postJSON('http://192.168.1.146:8082/loginHandles', params, function (msg) {
+                                                          console.log('登录返回信息：' + msg);
+                                                          console.log(JSON.stringify(msg));
+                                                          _this.getLoading().dismiss();
+
+                                                      })
+                                                  } else {
+                                                      db.transaction((tx) => {
+                                                          tx.executeSql("select * from t_user where user_id=? and user_pwd=?", [this.userName, this.userPwd], (tx, results) => {
+                                                              var len = results.rows.length;
+                                                              if (len > 0) {
+                                                                  Alert.alert('提示', '是否进行离线登录?',
+                                                                      [
+                                                                          {
+                                                                              text: '确 定',
+                                                                              onPress: this.offLineLogin
+                                                                          },
+                                                                          {
+                                                                              text: '取 消',
+                                                                              style: 'cancel'
+                                                                          }
+                                                                      ],
+                                                                      {
+                                                                          cancelable: true,
+                                                                          onDismiss: () => {
+
+                                                                          }
+                                                                      });
+                                                              } else {
+                                                                  this.refs.toast.show('首次登录需联网...', Toast.Duration.short, Toast.Position.bottom);
+                                                              }
+                                                          }, (error) => {//打印异常信息
+                                                              this.refs.toast.show('登录出错', Toast.Duration.short, Toast.Position.bottom);
+                                                              console.log(error);
                                                           });
-                                                          this.props.navigation.dispatch(resetAction);*/
-                                                          this.props.navigation.navigate('Main');
-                                                      } else {
-                                                          this.refs.toast.show('用户名或密码错误，请重新登录', Toast.Duration.short,Toast.Position.bottom);
-                                                      }
-                                                  });
-                                              }, (error) => {//打印异常信息
-                                                  this.refs.toast.show('登录出错', Toast.Duration.short,Toast.Position.bottom);
-                                                  console.log(error);
-                                              });
-
-                                          }
-                                      }}
-                    >
-                        <Text style={StyleUtil.btnText}>登 录</Text>
-                    </TouchableOpacity>
-                    <Toast ref={'toast'}/>
-                </View>
+                                                      });
+                                                  }
+                                              }
+                                          }}>
+                            <Text style={StyleUtil.btnText}>登 录</Text>
+                        </TouchableOpacity>
+                        <Toast ref={'toast'}/>
+                        <Loading ref={'loading'} text={this.text}/>
+                    </View>
+                </KeyboardAwareScrollView>
             </View>
-        )
-            ;
+        );
+    }
 
+    offLineLogin() {
+        this.refs.toast.show('离线登录成功', Toast.Duration.short, Toast.Position.long);
+        this.props.navigation.navigate('Main');
+    }
+
+    getLoading() {
+        return this.refs['loading'];
     }
 }
 const styles = StyleSheet.create(
@@ -162,8 +204,8 @@ const styles = StyleSheet.create(
         },
         pwdView: {
             width: '80%',
-            marginTop:15,
-            position:'relative'
+            marginTop: 15,
+            position: 'relative'
         },
         logo: {
             width: Util.size.width / 3,
@@ -176,26 +218,30 @@ const styles = StyleSheet.create(
             top: '50%',
             marginTop: -20,
         },
-        forgetText:{
+        forgetText: {
             color: '#c92a3a',
-            height:40,
-            lineHeight:35
+            height: 40,
+            lineHeight: 35
         },
         input1: {
             marginTop: 15,
             borderColor: '#AAAAAA',
-            borderWidth: 2,
+            borderWidth: 1,
             borderRadius: 15,
             width: '80%',
-            height: 40
+            height: 40,
+            textAlignVertical: 'center',
+            borderStyle: 'solid'
         },
         input2: {
             borderColor: '#AAAAAA',
-            width:'100%',
-            borderWidth: 2,
+            width: '100%',
+            borderWidth: 1,
             borderRadius: 15,
             width: '100%',
-            height: 40
+            height: 40,
+            textAlignVertical: 'center',
+            borderStyle: 'solid'
         }
     }
 );
