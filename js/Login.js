@@ -16,6 +16,8 @@ import NetUtil from "./utils/NetUtil";
 var sqlite = new SQLite();
 var db;
 var net = false;
+var _this;
+let url='http://192.168.1.110:3200/mobileLogin/login';
 // 也可以通过调用Toast.hide(toast); 手动隐藏toast实例
 export default class Login extends React.Component {
     constructor(props) {
@@ -23,20 +25,24 @@ export default class Login extends React.Component {
         this.userName = '';
         this.userPwd = '';
         this.text = '加载中...';
+        _this=this;
+
+    }
+
+
+    handleMethod(isConnected) {
+        console.log('test', (isConnected ? 'online' : 'offline'));
+    }
+    checkNet(){
         NetWorkTool.checkNetworkState((isConnected) => {
             if (!isConnected) {
-                this.refs.toast.show(NetWorkTool.NOT_NETWORK, Toast.Duration.short, Toast.Position.bottom);
+                //_this.refs.toast.show(NetWorkTool.NOT_NETWORK, Toast.Duration.short, Toast.Position.bottom);
                 net = false;
             } else {
                 net = true;
             }
         });
     }
-
-    handleMethod(isConnected) {
-        console.log('test', (isConnected ? 'online' : 'offline'));
-    }
-
     componentWillUnmount() {
         console.log("页面销毁")
         //NetWorkTool.removeEventListener(NetWorkTool.TAG_NETWORK_CHANGE, this.handleMethod);
@@ -95,7 +101,6 @@ export default class Login extends React.Component {
     }
 
     render() {
-        var _this=this;
         return (
             <View>
                 <Header {...this.props} title="登录" showBack={false}/>
@@ -125,6 +130,7 @@ export default class Login extends React.Component {
                                               } else if (this.userPwd == '') {
                                                   this.refs.toast.showBottom('密码不能为空');
                                               } else {
+                                                  _this.checkNet();
                                                   if (net) {
                                                       _this.getLoading().show('登录中...');
                                                       let params = {
@@ -135,11 +141,22 @@ export default class Login extends React.Component {
                                                       formData.append("username",this.userName);
                                                       formData.append("password",this.userPwd);
                                                       console.log(JSON.stringify(params));
-                                                      NetUtil.postJSON('http://192.168.1.146:8082/loginHandles', params, function (msg) {
-                                                          console.log('登录返回信息：' + msg);
-                                                          console.log(JSON.stringify(msg));
+                                                      NetUtil.postJSON(url, params, function (result) {
+                                                          if(result==null){
+                                                              _this.refs.toast.show('登录错误，请重试', Toast.Duration.long, Toast.Position.bottom);
+                                                              _this.getLoading().dismiss();
+                                                          }
+                                                          console.log(JSON.stringify(result));
+                                                          console.log('登录返回信息：' + result+'----'+result.result+'----'+result.message);
+                                                          let flag=result.result;
+                                                          let errorMsg=result.message;
+                                                          if(!flag){
+                                                              _this.refs.toast.show(errorMsg.isEmpty?'登录失败，请重试':errorMsg, Toast.Duration.long, Toast.Position.bottom);
+                                                          }else {
+                                                              _this.refs.toast.show('登录成功', Toast.Duration.long, Toast.Position.bottom);
+                                                              _this.props.navigation.navigate('Main');
+                                                          }
                                                           _this.getLoading().dismiss();
-
                                                       })
                                                   } else {
                                                       db.transaction((tx) => {
@@ -150,7 +167,7 @@ export default class Login extends React.Component {
                                                                       [
                                                                           {
                                                                               text: '确 定',
-                                                                              onPress: this.offLineLogin
+                                                                              onPress: _this.offLineLogin
                                                                           },
                                                                           {
                                                                               text: '取 消',
@@ -160,14 +177,13 @@ export default class Login extends React.Component {
                                                                       {
                                                                           cancelable: true,
                                                                           onDismiss: () => {
-
                                                                           }
                                                                       });
                                                               } else {
-                                                                  this.refs.toast.show('首次登录需联网...', Toast.Duration.short, Toast.Position.bottom);
+                                                                  _this.refs.toast.show('网络不通，请稍后再试...', Toast.Duration.short, Toast.Position.bottom);
                                                               }
                                                           }, (error) => {//打印异常信息
-                                                              this.refs.toast.show('登录出错', Toast.Duration.short, Toast.Position.bottom);
+                                                              _this.refs.toast.show('登录出错', Toast.Duration.short, Toast.Position.bottom);
                                                               console.log(error);
                                                           });
                                                       });
@@ -185,8 +201,8 @@ export default class Login extends React.Component {
     }
 
     offLineLogin() {
-        this.refs.toast.show('离线登录成功', Toast.Duration.short, Toast.Position.long);
-        this.props.navigation.navigate('Main');
+        _this.refs.toast.show('离线登录成功', Toast.Duration.short, Toast.Position.long);
+        _this.props.navigation.navigate('Main');
     }
 
     getLoading() {

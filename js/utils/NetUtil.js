@@ -50,6 +50,7 @@ export default class NetUtil{
             })
             .catch((error) => {
                 console.log("postJsonError = " + error)
+                callback(null)
             });
     }
     /*
