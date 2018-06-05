@@ -1,7 +1,7 @@
 import React from 'react';
 import Location from "../pages/Location";
 import {StackNavigator} from "react-navigation";
-import Login from "../../../Login";
+import Login from "../pages/Login";
 import HomeNavigator from "./HomeNavigator";
 // 路由
 const App = StackNavigator(

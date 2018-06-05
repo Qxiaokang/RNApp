@@ -13,7 +13,7 @@ export default class LifePage extends Component {
 	render(){
 		return(
 			<View>
-				<Header title='生活' showBack={true} backFunc={false}/>
+				<Header title='生活' showBack={false} backFunc={false}/>
 				<Text>生活</Text>
 			</View>
 		);

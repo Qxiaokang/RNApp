@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import {View,Text,StyleSheet,ScrollView,Image,TouchableOpacity} from 'react-native';
-import HeaderNoBack from '../head/HeaderNoBack';
+import {View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Alert, BackHandler} from 'react-native';
 import ItemView from '../common/ItemView';
 let img1= require('../../../../mres/Home/icon/punch_card_icon.png');
 let imgMail= require('../../../../mres/Home/icon/mail.png');
@@ -10,7 +9,6 @@ let imgService= require('../../../../mres/Home/icon/function_icon_service_center
 let imgSet= require('../../../../mres/Home/icon/setting.png');
 import Util from '../utils/Util';
 import Location from '../pages/Location';
-import {StackNavigator} from 'react-navigation';
 import Header from "../head/Header";
 export default class UserPage extends Component {
 
@@ -22,19 +20,25 @@ export default class UserPage extends Component {
 		const {navigate}=this.props.navigation;
 		return(
 			<View>
-			<Header text='我的' showBack={true} backFunc={false} />
+			<Header title='我的' showBack={false}/>
 			<ScrollView style={styles.content}>
-				
+
 				<View style={styles.centerView}/>
 				<View style={styles.topView}>
 					<Image source={imgService} style={styles.headIcon}/>
 					<Text style={styles.nameText}>用户名</Text>
 				</View>
 				<View style={styles.centerView}/>
-				<TouchableOpacity onPress={()=>navigate('Location')}>
-					<ItemView text='考勤打卡' icon={img1} />
-				</TouchableOpacity>
+                <TouchableOpacity onPress={()=>navigate('Location')}>
+                    <ItemView text='考勤打卡' icon={img1} />
+                </TouchableOpacity>
 				<View style={styles.centerView}/>
+
+                <View style={styles.centerView}/>
+                <TouchableOpacity onPress={()=>navigate('MCamera')}>
+                    <ItemView text='拍照' icon={img1} />
+                </TouchableOpacity>
+                <View style={styles.centerView}/>
 				
 				<ItemView text='我的客服' icon={imgService}/>
 					
@@ -47,7 +51,12 @@ export default class UserPage extends Component {
 				<View style={styles.centerView}/>
 			
 				<ItemView text='设置' icon={imgSet}/>
-				
+
+				<TouchableOpacity onPress={()=>{
+                    this.props.navigation.navigate('Login')
+				}}>
+				<Text style={styles.exitText}>退出登录</Text>
+				</TouchableOpacity>
 			</ScrollView>
 			</View>
 		);
@@ -55,7 +64,8 @@ export default class UserPage extends Component {
 }
 const styles = StyleSheet.create({
 	content:{
-		backgroundColor:'#e4e4e4'
+		backgroundColor:'#e4e4e4',
+		height:Util.size.height-100
 	},
 	topView:{
 		height:100,
@@ -75,6 +85,17 @@ const styles = StyleSheet.create({
 		width:50,
 		height:50,
 		marginLeft:15
+	},
+	exitText:{
+		width:'100%',
+		height:50,
+		marginTop:15,
+		backgroundColor:'#FFFFFF',
+		color:'#C92A3A',
+		fontSize:20,
+		textAlign:'center',
+		alignSelf:'center',
+		paddingTop:15
 	},
 	lineCenter: {
             backgroundColor: '#C92A3A',

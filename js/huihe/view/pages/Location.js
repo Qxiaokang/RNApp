@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View,Text,StyleSheet,ScrollView,Image,TextInput,TouchableOpacity} from 'react-native';
+import {View,Text,StyleSheet,TextInput,TouchableOpacity} from 'react-native';
 import Util from "../utils/Util";
 import Header from "../head/Header";
 

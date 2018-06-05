@@ -1,23 +1,22 @@
 import React from 'react';
 import {
-    View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Alert, KeyboardAvoidingView,
-    BackHandler
+    View, Text, Image, TextInput, TouchableOpacity, StyleSheet, Alert
 } from 'react-native';
-import Util from "./utils/Util";
-import StyleUtil from './utils/StyleUtil';
-import Header from './huihe/view/head/Header';
-import SQLite from "./db/SQLite";
-import GetSetStorge from "./GetSetStorge";
-import NetWorkTool from "./utils/NetWorkTool";
+import Util from "../../../utils/Util";
+import StyleUtil from '../../../utils/StyleUtil';
+import SQLite from "../../../utils/SQLite";
+import GetSetStorage from "../../../utils/GetSetStorage";
+import NetWorkTool from "../../../utils/NetWorkTool";
 import Toast from 'react-native-whc-toast'; // 引入类库
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Loading from 'react-native-loading-w'
-import NetUtil from "./utils/NetUtil";
+import NetUtil from "../../../utils/NetUtil";
 var sqlite = new SQLite();
 var db;
 var net = false;
 var _this;
-let url='http://192.168.1.110:3200/mobileLogin/login';
+//let url='http://192.168.1.110:3200/mobileLogin/login';
+let url='http://192.168.1.126:8082/loginHandles';
 // 也可以通过调用Toast.hide(toast); 手动隐藏toast实例
 export default class Login extends React.Component {
     constructor(props) {
@@ -26,17 +25,15 @@ export default class Login extends React.Component {
         this.userPwd = '';
         this.text = '加载中...';
         _this=this;
-
     }
-
-
     handleMethod(isConnected) {
         console.log('test', (isConnected ? 'online' : 'offline'));
     }
-    checkNet(){
+    /**检查网络是否断开*/
+    checkNet() {
         NetWorkTool.checkNetworkState((isConnected) => {
             if (!isConnected) {
-                //_this.refs.toast.show(NetWorkTool.NOT_NETWORK, Toast.Duration.short, Toast.Position.bottom);
+                _this.refs.toast.show(NetWorkTool.NOT_NETWORK, Toast.Duration.short, Toast.Position.bottom);
                 net = false;
             } else {
                 net = true;
@@ -45,29 +42,32 @@ export default class Login extends React.Component {
     }
     componentWillUnmount() {
         console.log("页面销毁")
-        //NetWorkTool.removeEventListener(NetWorkTool.TAG_NETWORK_CHANGE, this.handleMethod);
+        NetWorkTool.removeEventListener(NetWorkTool.TAG_NETWORK_CHANGE, this.handleMethod);
+        //关闭数据库
         sqlite.close();
     }
-
+    componentDidMount(){
+        this.checkNet();
+    }
     componentWillMount() {
         console.log("登录---componentWillMount")
-        //NetWorkTool.addEventListener(NetWorkTool.TAG_NETWORK_CHANGE, this.handleMethod);
+        NetWorkTool.addEventListener(NetWorkTool.TAG_NETWORK_CHANGE, this.handleMethod);
         //开启数据库
         console.log("准备打开SQLite");
         db = sqlite.openDB();
         //如果是第一次进入创建表
-        GetSetStorge.getStorgeAsync('isFirst').then((result) => {
+        GetSetStorage.getStorageAsync('isFirst').then((result) => {
             if (result == null || result == '') {
                 console.log("首次进入App")
                 //建表
                 console.log("创建t_user表");
                 sqlite.createTable();
                 //删除数据
-                sqlite.deleteData();
+                //sqlite.deleteData();
                 //模拟一条数据
                 var userData = [];
                 var user = {};
-                user.id = "13111112222";
+                user.id = "13344445555";
                 user.pwd = "123456";
                 user.name = "张三";
                 user.age = "28";
@@ -77,7 +77,7 @@ export default class Login extends React.Component {
                 user.qq = "111222";
                 userData.push(user);
                 //插入数据
-                sqlite.insertUserData(userData);
+                //ßsqlite.insertUserData(userData);
                 //查询
                 db.transaction((tx) => {
                     tx.executeSql("select * from t_user", [], (tx, results) => {
@@ -92,7 +92,7 @@ export default class Login extends React.Component {
                 }, (error) => {//打印异常信息
                     console.log(error);
                 });
-                GetSetStorge.setStorgeAsync('isFirst', 'not');
+                GetSetStorage.setStorageAsync('isFirst', 'not');
             } else {
                 console.log("非首次进入")
             }
@@ -103,10 +103,9 @@ export default class Login extends React.Component {
     render() {
         return (
             <View>
-                <Header {...this.props} title="登录" showBack={false}/>
                 <KeyboardAwareScrollView>
                     <View style={styles.content}>
-                        <Image source={require('../mres/img/icon1.png')}/>
+                        <Image source={require('../../../../mres/img/icon1.png')}/>
                         <TextInput style={styles.input1} placeholder='请输入手机号码'
                                    underlineColorAndroid='transparent' //设置下划线背景色透明 达到去掉下划线的效果
                                    onChangeText={(text) => this.userName = text}
@@ -125,10 +124,9 @@ export default class Login extends React.Component {
                                           onPress={() => {
                                               if (this.userName == '') {
                                                   //15136311938
-                                                  this.refs.toast.showBottom('手机号码不能为空');
-                                                  //Toast.show('手机号码不能为空',  Toast.Duration.SHORT);
+                                                  _this.refs.toast.showBottom('手机号码不能为空');
                                               } else if (this.userPwd == '') {
-                                                  this.refs.toast.showBottom('密码不能为空');
+                                                  _this.refs.toast.showBottom('密码不能为空');
                                               } else {
                                                   _this.checkNet();
                                                   if (net) {
@@ -137,33 +135,53 @@ export default class Login extends React.Component {
                                                           'username': this.userName,
                                                           'password': this.userPwd
                                                       };
-                                                      let formData = new FormData();
-                                                      formData.append("username",this.userName);
-                                                      formData.append("password",this.userPwd);
                                                       console.log(JSON.stringify(params));
                                                       NetUtil.postJSON(url, params, function (result) {
-                                                          if(result==null){
+                                                          if (result == null) {
                                                               _this.refs.toast.show('登录错误，请重试', Toast.Duration.long, Toast.Position.bottom);
                                                               _this.getLoading().dismiss();
                                                           }
                                                           console.log(JSON.stringify(result));
-                                                          console.log('登录返回信息：' + result+'----'+result.result+'----'+result.message);
-                                                          let flag=result.result;
-                                                          let errorMsg=result.message;
-                                                          if(!flag){
-                                                              _this.refs.toast.show(errorMsg.isEmpty?'登录失败，请重试':errorMsg, Toast.Duration.long, Toast.Position.bottom);
-                                                          }else {
+                                                          console.log('登录返回信息：' + result + '----' + result.result + '----' + result.message);
+                                                          let flag = result.result;
+                                                          let errorMsg = result.message;
+                                                          if (!flag) {
+                                                              _this.refs.toast.show(errorMsg.isEmpty ? '登录失败，请重试' : errorMsg, Toast.Duration.long, Toast.Position.bottom);
+                                                          } else {
                                                               _this.refs.toast.show('登录成功', Toast.Duration.long, Toast.Position.bottom);
+                                                              db.transaction((tx) => {
+                                                                  tx.executeSql("select * from t_user where user_id=? ", [_this.userName], (tx, results) => {
+                                                                      var len=results.rows.length;
+                                                                      console.log('len-------'+len);
+                                                                      if(len>0){
+                                                                          tx.executeSql("update t_user set user_id=?,user_pwd=?",[_this.userName,_this.userPwd],()=>{
+                                                                          },(error)=>{
+                                                                              _this.refs.toast.show('更新用户信息失败！', Toast.Duration.long, Toast.Position.bottom);
+                                                                              console.log('DB_Error:'+error);
+                                                                          });
+                                                                      }else {
+                                                                          tx.executeSql("insert into t_user (user_id,user_pwd,name,age,sex,phone,email,qq) values(?,?,?,?,?,?,?,?)",[_this.userName,_this.userPwd,'','','','','',''],()=>{},
+                                                                              (error)=>{
+                                                                                  _this.refs.toast.show('插入用户信息失败！', Toast.Duration.long, Toast.Position.bottom);
+                                                                                  console.log('DB_Error:'+error);
+                                                                              });
+                                                                      }
+                                                                  }, (error) => {
+                                                                      _this.refs.toast.show('用户查询失败！', Toast.Duration.long, Toast.Position.bottom);
+                                                                      console.log('DB_Error:'+error);
+                                                                  });
+                                                              });
+                                                              _this.getLoading().dismiss();
                                                               _this.props.navigation.navigate('Main');
                                                           }
                                                           _this.getLoading().dismiss();
-                                                      })
+                                                      });
                                                   } else {
                                                       db.transaction((tx) => {
                                                           tx.executeSql("select * from t_user where user_id=? and user_pwd=?", [this.userName, this.userPwd], (tx, results) => {
                                                               var len = results.rows.length;
                                                               if (len > 0) {
-                                                                  Alert.alert('提示', '是否进行离线登录?',
+                                                                  Alert.alert('提示', '网络不通，是否进行离线登录?',
                                                                       [
                                                                           {
                                                                               text: '确 定',
@@ -192,19 +210,19 @@ export default class Login extends React.Component {
                                           }}>
                             <Text style={StyleUtil.btnText}>登 录</Text>
                         </TouchableOpacity>
-                        <Toast ref={'toast'}/>
-                        <Loading ref={'loading'} text={this.text}/>
                     </View>
+                    <Toast ref={'toast'}/>
+                    <Loading ref={'loading'} text={_this.text} />
                 </KeyboardAwareScrollView>
             </View>
         );
     }
-
+    /**离线登陆成功*/
     offLineLogin() {
-        _this.refs.toast.show('离线登录成功', Toast.Duration.short, Toast.Position.long);
+        _this.refs.toast.show('离线登录成功', Toast.Duration.short, Toast.Position.bottom);
         _this.props.navigation.navigate('Main');
     }
-
+    /**获取loading圈*/
     getLoading() {
         return this.refs['loading'];
     }
@@ -214,7 +232,7 @@ const styles = StyleSheet.create(
         content: {
             backgroundColor: '#FFF',
             width: Util.size.width,
-            height: Util.size.height - 50,
+            height: Util.size.height,
             justifyContent: 'center',
             alignItems: 'center'
         },
@@ -247,7 +265,8 @@ const styles = StyleSheet.create(
             width: '80%',
             height: 40,
             textAlignVertical: 'center',
-            borderStyle: 'solid'
+            borderStyle: 'solid',
+            paddingLeft:5
         },
         input2: {
             borderColor: '#AAAAAA',
@@ -257,7 +276,8 @@ const styles = StyleSheet.create(
             width: '100%',
             height: 40,
             textAlignVertical: 'center',
-            borderStyle: 'solid'
+            borderStyle: 'solid',
+            paddingLeft:5
         }
     }
 );

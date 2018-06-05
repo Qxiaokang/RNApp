@@ -6,7 +6,7 @@ class GetSetStorge {
     /**
      * 异步保存
      */
-    setStorgeAsync(key, value) {
+    setStorageAsync(key, value) {
         return new Promise((resolve, reject) => {
             AsyncStorage.setItem(key, value, (error) => {
                 if (error) {
@@ -26,7 +26,7 @@ class GetSetStorge {
     /**
      * 异步获取
      */
-    getStorgeAsync(key) {
+    getStorageAsync(key) {
         return new Promise((resolve, reject) => {
             AsyncStorage.getItem(key, (error, result) => {
                 if (error) {

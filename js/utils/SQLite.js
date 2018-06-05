@@ -5,11 +5,12 @@ import{
 import SQLiteStorage from 'react-native-sqlite-storage';
 
 SQLiteStorage.DEBUG(true);
-var database_name = "test.db";//数据库文件
+var database_name = "huihe.db";//数据库文件
 var database_version = "1.0";//版本号
-var database_displayname = "MySQLite";
+var database_displayname = "HuiHeSQLite";
 var database_size = -1;//-1应该是表示无限制
 var T_USER='t_user';
+import Toast from 'react-native-whc-toast';
 var db;
 export default class  SQLite extends Component{
     componentWillUnmount(){
@@ -38,7 +39,7 @@ export default class  SQLite extends Component{
         if (!db) {
             this.open();
         }
-        //创建用户表  
+        //创建用户表
         db.transaction((tx)=> {
             tx.executeSql('CREATE TABLE IF NOT EXISTS '+T_USER+'(' +
                 'id INTEGER PRIMARY KEY  AUTOINCREMENT,' +
@@ -55,7 +56,7 @@ export default class  SQLite extends Component{
                 }, (err)=> {
                     this._errorCB('executeSql', err);
                 });
-        }, (err)=> {//所有的 transaction都应该有错误的回调方法，在方法里面打印异常信息，不然你可能不会知道哪里出错了。  
+        }, (err)=> {//所有的 transaction都应该有错误的回调方法，在方法里面打印异常信息，不然你可能不会知道哪里出错了。
             this._errorCB('transaction', err);
         }, ()=> {
             this._successCB('transaction');
@@ -111,10 +112,10 @@ export default class  SQLite extends Component{
             }
         },(error)=>{
             this._errorCB('transaction', error);
-            ToastAndroid.show("数据插入失败",ToastAndroid.SHORT);
+            this.refs.toast.show("数据插入失败",Toast.Duration.short,Toast.Position.bottom);
         },()=>{
             this._successCB('transaction insert data');
-            ToastAndroid.show("成功插入 "+len+" 条用户数据",ToastAndroid.SHORT);
+            this.refs.toast.show("成功插入 "+len+" 条用户数据",Toast.Duration.short,Toast.Position.bottom);
         });
     }
     close(){
@@ -134,6 +135,6 @@ export default class  SQLite extends Component{
         console.log(err);
     }
     render(){
-        return null;
+        return (<Toast ref={'toast'}/>);
     }
 };

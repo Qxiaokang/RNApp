@@ -15,7 +15,7 @@ export default class HomePage extends Component {
     render() {
         return (
             <View style={styles.webContent}>
-                <Header {...this.props} title={'首页'} showBack={true} backFunc={false}/>
+                <Header {...this.props} title={'首页'} showBack={false} backFunc={false}/>
                 <WebView source={{uri: 'http://www.baidu.com'}}/>
 				<Toast ref={'toast'}/>
             </View>

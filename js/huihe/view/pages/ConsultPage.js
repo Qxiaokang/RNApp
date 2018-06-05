@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {View,Text,StyleSheet} from 'react-native';
-import HeaderNoBack from '../head/HeaderNoBack';
 import Header from "../head/Header";
 
 export default class ConsultPage extends Component {
@@ -13,7 +12,7 @@ export default class ConsultPage extends Component {
 	render(){
 		return(
 			<View>
-				<Header text='物业' showBack={true} backFunc={false}/>
+				<Header title='物业' showBack={false}/>
 				<Text>物业</Text>
 			</View>
 		);

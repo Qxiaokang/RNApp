@@ -7,7 +7,7 @@ import {
 let image1 = require('../mres/img/splash1.jpg');
 let image2 = require('../mres/img/timg.jpg');
 let image3 = require('../mres/img/splash3.jpg');
-import SQLite from '../js/db/SQLite';
+import SQLite from './utils/SQLite';
 var sqlite=new SQLite();
 var db;
 const {width, height} = Dimensions.get('window');
