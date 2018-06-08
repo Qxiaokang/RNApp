@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
             width:30,
             height:30,
             marginLeft:10,
-            marginTop:10
+            justifyContent:'center'
         },
         imgStyle2:{
             width:20,

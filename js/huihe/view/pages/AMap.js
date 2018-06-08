@@ -48,8 +48,9 @@ export default class EventsExample extends Component {
 
     async componentDidMount() {
         await Geolocation.init({
-            ios: "1939b08d7b1dba1cb6030821f9e50dae",
+            android:"975de66c06b6767fd5fc1567584ad490"
         });
+        //ios: "1939b08d7b1dba1cb6030821f9e50dae",
         Geolocation.setOptions({
             distanceFilter: 100,
             reGeocode: true
@@ -108,10 +109,10 @@ export default class EventsExample extends Component {
             <View style={styles.body}>
                 <MapView
                     ref={ref => this.mapView = ref}
-                    locationEnabled
-                    distanceFilter={100}
+                    locationEnabled={true} //开启定位
+                    distanceFilter={100}//定位的最小更新距离
                     zoomLevel={17}
-                    mapType='standard'
+                    mapType='standard' //地图模式
                     coordinate={{
                         latitude: this.state.mLatitude,
                         longitude: this.state.mLongitude,

@@ -1,14 +1,14 @@
 import React from 'react';
-import Location from "../pages/Location";
 import {StackNavigator} from "react-navigation";
 import Login from "../pages/Login";
 import HomeNavigator from "./HomeNavigator";
+import EventsExample from "../pages/UserSignIn";
 // 路由
 const App = StackNavigator(
     {
         Login:{screen: Login},
         Main: {screen: HomeNavigator},
-        Location:{screen: Location}
+        MMap:{ screen: EventsExample}
     },
     {
         initialRouteName: 'Login',

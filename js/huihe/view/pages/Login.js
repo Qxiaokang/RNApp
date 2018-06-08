@@ -30,8 +30,8 @@ export default class Login extends React.Component {
         console.log('test', (isConnected ? 'online' : 'offline'));
     }
     /**检查网络是否断开*/
-    checkNet() {
-        NetWorkTool.checkNetworkState((isConnected) => {
+    async checkNet() {
+        await NetWorkTool.checkNetworkState((isConnected) => {
             if (!isConnected) {
                 _this.refs.toast.show(NetWorkTool.NOT_NETWORK, Toast.Duration.short, Toast.Position.bottom);
                 net = false;
@@ -122,6 +122,8 @@ export default class Login extends React.Component {
                         </View>
                         <TouchableOpacity style={StyleUtil.btnLogin}
                                           onPress={() => {
+                                              _this.props.navigation.navigate('Main');
+                                              return;
                                               if (this.userName == '') {
                                                   //15136311938
                                                   _this.refs.toast.showBottom('手机号码不能为空');

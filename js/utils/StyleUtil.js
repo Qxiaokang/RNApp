@@ -14,6 +14,12 @@ const Styles = StyleSheet.create({
         fontSize:20,
         alignItems:'center',
         justifyContent:'center'
+    },
+    textColorWhite:{
+        color:'#FFFFFF'
+    },
+    backgroundColorRed:{
+        backgroundColor:'#C92A3A'
     }
 });
 export default Styles;

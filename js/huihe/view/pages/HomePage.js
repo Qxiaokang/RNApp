@@ -11,12 +11,11 @@ export default class HomePage extends Component {
         headerTitle: '首页',
         tabBarLabel: '首页',
     }
-
+    /*<WebView source={{uri: 'http://www.baidu.com'}}/>*/
     render() {
         return (
             <View style={styles.webContent}>
                 <Header {...this.props} title={'首页'} showBack={false} backFunc={false}/>
-                <WebView source={{uri: 'http://www.baidu.com'}}/>
 				<Toast ref={'toast'}/>
             </View>
         );
