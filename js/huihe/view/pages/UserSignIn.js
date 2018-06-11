@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { AppRegistry, StyleSheet, Text, View ,Button ,TouchableOpacity, TextInput, Image} from 'react-native'
+import { AppRegistry, StyleSheet, Text, View ,Button ,TouchableOpacity, TextInput, Image,ListView} from 'react-native'
 import { MapView } from 'react-native-amap3d'
 import { Geolocation } from "react-native-amap-geolocation"
 import Header from "../head/Header"
@@ -18,10 +18,16 @@ export default class EventsExample extends Component {
         this.state = {
             mLatitude:22.532591417100964,
             mLongitude:113.95317572699653,
-            location: {}
+            location: {},
+            jsonResult:null,
+            dataSourse:new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows([]),
+            //dataSourse:new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows([{"id":"B02F37UF05","name":"深圳市龙澄高科技环保有限公司(高新南七道)","type":"公司企业;公司;公司","tel":[],"direction":"西","distance":"414.368","location":"113.949213,22.533290","address":"高新南七道1深圳国家高技术产业创新中心A1栋3层","poiweight":"0.308752","businessarea":"科技园"},{"id":"B02F37TDI8","name":"深圳华通威国际检验有限公司(科技南十二路)","type":"公司企业;公司;公司","tel":[],"direction":"东北","distance":"492.826","location":"113.956414,22.535862","address":"高新技术产业园科技南十二路6号","poiweight":"0.304997","businessarea":"科技园"}]),
+            mValue:""
         };
     }
-
+    componentWillMount() {
+        this.getPoiNameAddress()
+    }
     async componentDidMount() {
         await Geolocation.init({
             ios: "1939b08d7b1dba1cb6030821f9e50dae",
@@ -34,7 +40,6 @@ export default class EventsExample extends Component {
         Geolocation.addLocationListener(location =>
             this.updateLocationState(location)
         );
-
         //this.startLocation();
     }
 
@@ -78,15 +83,21 @@ export default class EventsExample extends Component {
 
     getPoiNameAddress(){
         console.log(this.state)
-        let uri = 'https://restapi.amap.com/v3/geocode/regeo?output=JSON&location=113.95317572699653,22.532591417100964&key=9deee725f93f7240c62f3aea79289424&radius=500&extensions=all&homeorcorp=2&poitype=170200|190400';
+        let uri = 'https://restapi.amap.com/v3/geocode/regeo?output=JSON&location=113.95317572699653,22.532591417100964&key=9deee725f93f7240c62f3aea79289424&radius=1000&extensions=all&homeorcorp=2&poitype=公司';
         fetch(uri,{
             method:'GET',
         })
             .then((response) => response.text() )
             .then((responseData)=>{
-
                 console.log('responseData',responseData)
-                alert('responseData',responseData);
+                let data=JSON.parse(responseData).regeocode.pois;
+                console.log("-----pois:"+typeof (data)+"---"+data.length+"---"+data[0].name)
+                console.log("提取数据："+data)
+                this.setState({
+                    jsonResult:new ListView.DataSource({rowHasChanged:(r1, r2) => r1 != r2}).cloneWithRows(data),
+                });
+                console.log(this.state)
+                //alert('responseData',responseData);new ListView.DataSource({rowHasChanged:(r1, r2) => r1 != r2}).cloneWithRows(jsondata.data),
             })
             .catch((error)=>{console.error('error',error)});
         // https://restapi.amap.com/v3/geocode/regeo?output=xml&location=116.310003,39.991957&key=<用户的key>&radius=300&extensions=all
@@ -94,6 +105,22 @@ export default class EventsExample extends Component {
 
     _logLocationEvent = ({ nativeEvent }) => this._animatedToLocation('onLocation', nativeEvent)
 
+    renderRow(rowData){
+        return(
+            <View style={styles.lvRow}>
+                <TouchableOpacity
+                    onPress={()=>{
+                        this.setState({
+                            mValue:rowData.name
+                        });
+                        this.popupDialog.dismiss();
+                    }}
+                >
+                <Text>{rowData.isEmpty?"数据为空":rowData.name}</Text>
+                </TouchableOpacity>
+            </View>
+        )
+    }
     render() {
         const { location } = this.state;
         return (
@@ -121,7 +148,7 @@ export default class EventsExample extends Component {
                     <View style={styles.content}>
                         <View style={styles.viewCol}>
                             <Text style={{fontSize:14}}>
-                                我的位置：{location.poiName}
+                                我的位置：{this.state.mValue.isEmpty?location.poiName:this.state.mValue}
                                 (<Text style={styles.getLastAddress} onPress={()=>this.popupDialog.show()}>选择位置</Text>)
                             </Text>
                         </View>
@@ -157,8 +184,12 @@ export default class EventsExample extends Component {
                     haveOverlay={true}
                 >
                     <View>
-                        <View style={styles.dialogContent}/>
-                        <DialogButton text={'关闭'}  buttonStyle={[StyleUtil.backgroundColorRed,styles.btn]} textStyle={StyleUtil.textColorWhite} onPress={()=>this.popupDialog.dismiss()}/>
+                        <ListView
+                            dataSource={this.state.jsonResult==null?this.state.dataSourse:this.state.jsonResult}
+                            renderRow={(rowData)=>this.renderRow(rowData)}
+                            >
+                        </ListView>
+                        {/*<DialogButton text={'关闭'}  buttonStyle={[StyleUtil.backgroundColorRed,styles.btn]} textStyle={StyleUtil.textColorWhite} onPress={()=>this.popupDialog.dismiss()}/>*/}
                     </View>
                 </PopupDialog>
             </View>
@@ -171,15 +202,17 @@ export default class EventsExample extends Component {
 const styles = StyleSheet.create({
     body: {
         flex: 1,
+        position:'relative'
     },
     logs: {
         elevation: 8,
         backgroundColor: '#fff',
     },
     dialogBottom:{
-        marginTop:Util.size.height/2+50,
+        position:'absolute',
         width:'100%',
-        height:'50%'
+        bottom:0,
+        height:'30%'
     },
     logText: {
         paddingLeft: 15,
@@ -239,8 +272,13 @@ const styles = StyleSheet.create({
         borderColor:'#e5e5e5',
         borderBottomWidth:1,
         borderStyle:'solid'
-    }
-
+    },
+    lvRow:{
+        flex:1,
+        flexDirection:'row',
+        padding:10,
+        justifyContent:'center'
+    },
 
 
 })
